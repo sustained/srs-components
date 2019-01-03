@@ -88,3 +88,5 @@ Memrise ends up looking really bad if any of the choices have long lines. This c
 ![long lines don't look good](notes-images/memrise-ui-multiple-choice-long-lines.png)
 
 ![long lines don't look good](notes-images/memrise-ui-multiple-choice-long-lines-2.png)
+
+![long lines don't look good](notes-images/memrise-ui-multiple-choice-long-lines-3.png)
