@@ -40,7 +40,7 @@
 import ChooseTranslation from "@/components/ChooseTranslation.vue";
 
 export default {
-  name: "home",
+  name: "lesson",
   data() {
     return {
       currentExerciseIndex: -1,
