@@ -18,7 +18,7 @@
     <template v-else-if="sessionStarted">
       <p>
         <strong>Current Exercise:</strong>
-        {{ currentExerciseIndex }} / {{ exerciseCount }}
+        {{ currentExerciseIndex + 1 }} / {{ exerciseCount }}
       </p>
 
       <choose-translation
