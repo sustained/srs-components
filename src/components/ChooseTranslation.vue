@@ -46,12 +46,7 @@ export default {
   },
 
   mounted() {
-    console.log("mounted");
-
-    this.$parent.$on("change", () => {
-      console.log("yup");
-      this.guess = null;
-    });
+    this.$parent.$on("change", () => (this.guess = null));
   },
 
   props: {
@@ -70,40 +65,17 @@ export default {
       return this.guess === option && this.guess !== this.correctAnswer;
     },
 
-    // createClasses() {
-    //   this.targetOptions.forEach(option => {
-    //     this.$set(this.targetClasses, option, []);
-    //   });
-    // },
-
     checkAnswer(option) {
-      console.log(option, this.correctAnswer);
-
       this.guess = option;
 
-      if (option === this.correctAnswer) {
-        // this.setCorrect(option);
-        this.$emit("correct", {
-          correct: true,
-          choice: option,
-          source: this.sourceWord
-        });
-      } else {
-        // this.setIncorrect(option);
-        this.$emit("incorrect", {
-          correct: false,
-          choice: option,
-          source: this.sourceWord
-        });
-      }
-    },
+      let wasCorrect = option === this.correctAnswer;
+      let eventName = wasCorrect ? "correct" : "incorrect";
 
-    setCorrect(option) {
-      // this.targetClasses[option].push("correct");
-    },
-
-    setIncorrect(option) {
-      // this.targetClasses[option].push("incorrect");
+      this.$emit(eventName, {
+        correct: wasCorrect,
+        choice: option,
+        source: this.sourceWord
+      });
     }
   }
 };

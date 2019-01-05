@@ -41,8 +41,10 @@ import ChooseTranslation from "@/components/ChooseTranslation.vue";
 
 export default {
   name: "lesson",
+
   data() {
     return {
+      delay: 1000,
       currentExerciseIndex: -1,
       sessionStarted: false,
       sessionEnded: false,
@@ -108,24 +110,20 @@ export default {
     },
 
     nextExercise() {
-      this.currentExerciseIndex++;
-      this.$emit("change");
+      if (this.currentExerciseIndex + 1 === this.exerciseCount) {
+        this.sessionEnded = true;
+        this.sessionStarted = false;
+        this.$emit("finish");
+      } else {
+        this.currentExerciseIndex++;
+        this.$emit("change");
+      }
     },
 
     onAnswer({ correct, choice }) {
-      console.log("answer was " + (correct ? "correct" : "incorrect"));
-      console.log(this.currentExerciseIndex, this.exerciseCount);
-
       this.addSessionEntry(correct, choice);
 
-      if (this.currentExerciseIndex + 1 === this.exerciseCount) {
-        setTimeout(() => {
-          this.sessionEnded = true;
-          this.sessionStarted = false;
-        }, 2000);
-      } else {
-        setTimeout(() => this.nextExercise(), 2000);
-      }
+      setTimeout(() => this.nextExercise(), this.delay);
     }
   }
 };
