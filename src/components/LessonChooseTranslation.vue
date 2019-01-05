@@ -21,7 +21,7 @@
 <script>
 /* eslint-disable */
 export default {
-  name: "ChooseTranslation",
+  name: "LessonChooseTranslation",
 
   data() {
     return {

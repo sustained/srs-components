@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import ChooseTranslation from "@/components/ChooseTranslation.vue";
+import ChooseTranslation from "@/components/LessonChooseTranslation.vue";
 
 export default {
   name: "lesson",
