@@ -11,8 +11,8 @@
       </p>
 
       <lesson-choose-translation
-        :source="currentExercise.word"
-        :correct="currentExercise.answer"
+        :prompt="currentExercise.prompt"
+        :answer="currentExercise.answer"
         :options="currentExercise.choices"
         @correct="onAnswer"
         @incorrect="onAnswer"
@@ -43,7 +43,7 @@ export default {
         {
           id: 0,
           type: "choose-translation",
-          word: "dog",
+          prompt: "dog",
           answer: "hund",
           choices: ["hund", "katt", "mus"]
         },
@@ -51,7 +51,7 @@ export default {
         {
           id: 1,
           type: "choose-translation",
-          word: "woman",
+          prompt: "woman",
           answer: "kvinna",
           choices: ["pojke", "flicka", "man", "kvinna"]
         },
@@ -59,7 +59,7 @@ export default {
         {
           id: 2,
           type: "choose-translation",
-          word: "milk",
+          prompt: "milk",
           answer: "mjölk",
           choices: ["bröd", "äpple", "vatten", "mjölk"]
         }

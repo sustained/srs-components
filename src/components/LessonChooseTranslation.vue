@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>{{ sourceWord }}</h1>
+    <h1>{{ thePrompt }}</h1>
 
     <p>Pick the correct translation:</p>
 
@@ -23,24 +23,30 @@
 export default {
   name: "LessonChooseTranslation",
 
+  props: {
+    prompt: String,
+    answer: String,
+    options: Array
+  },
+
   data() {
     return {
       guess: null,
-      sourceWord: this.source,
-      correctAnswer: this.correct,
-      targetOptions: this.options
+      thePrompt: this.prompt,
+      theAnswer: this.answer,
+      theOptions: this.options
     };
   },
 
   watch: {
-    source(newSourceWord) {
-      this.sourceWord = newSourceWord;
+    prompt(newPrompt) {
+      this.thePrompt = newPrompt;
     },
-    correct(newCorrectAnswer) {
-      this.correctAnswer = newCorrectAnswer;
+    answer(newAnswer) {
+      this.theAnswer = newAnswer;
     },
-    options(newTargetOptions) {
-      this.targetOptions = newTargetOptions;
+    options(newOptions) {
+      this.theOptions = newOptions;
     }
   },
 
@@ -48,32 +54,27 @@ export default {
     this.$parent.$on("change", () => (this.guess = null));
   },
 
-  props: {
-    source: String,
-    correct: String,
-    options: Array
-  },
-
   methods: {
     isCorrect(option) {
-      if (this.guess === option) return this.guess === this.correctAnswer;
-      else if (this.guess !== null) return option === this.correctAnswer;
+      if (this.guess === option) return this.guess === this.theAnswer;
+      else if (this.guess !== null) return option === this.theAnswer;
     },
 
     isIncorrect(option) {
-      return this.guess === option && this.guess !== this.correctAnswer;
+      return this.guess === option && this.guess !== this.theAnswer;
     },
 
     checkAnswer(option) {
       this.guess = option;
 
-      let wasCorrect = option === this.correctAnswer;
+      let wasCorrect = option === this.theAnswer;
       let eventName = wasCorrect ? "correct" : "incorrect";
 
       this.$emit(eventName, {
         correct: wasCorrect,
         choice: option,
-        source: this.sourceWord
+        answer: this.theAnswer,
+        prompt: this.sourceWord
       });
     }
   }
