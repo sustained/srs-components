@@ -1,18 +1,7 @@
 <template>
   <div>
     <template v-if="sessionEnded">
-      <p>Lesson over!</p>
-
-      <ul>
-        <li
-          v-for="(entry, index) in session"
-          :key="index"
-        >You wrote {{ entry.choice}} and were {{ entry.wasCorrect ? 'correct' : 'incorrect'}}</li>
-      </ul>
-
-      <p>
-        <button type="submit" @click="resetSession">Try again?</button>
-      </p>
+      <lesson-complete :session="session" @restart="resetSession"/>
     </template>
 
     <template v-else-if="sessionStarted">
@@ -21,7 +10,7 @@
         {{ currentExerciseIndex + 1 }} / {{ exerciseCount }}
       </p>
 
-      <choose-translation
+      <lesson-choose-translation
         :source="currentExercise.word"
         :correct="currentExercise.answer"
         :options="currentExercise.choices"
@@ -37,7 +26,8 @@
 </template>
 
 <script>
-import ChooseTranslation from "@/components/LessonChooseTranslation.vue";
+import LessonComplete from "@/components/LessonComplete.vue";
+import LessonChooseTranslation from "@/components/LessonChooseTranslation.vue";
 
 export default {
   name: "lesson",
@@ -88,7 +78,8 @@ export default {
   },
 
   components: {
-    ChooseTranslation
+    LessonComplete,
+    LessonChooseTranslation
   },
 
   methods: {

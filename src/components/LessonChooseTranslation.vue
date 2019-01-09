@@ -28,8 +28,7 @@ export default {
       guess: null,
       sourceWord: this.source,
       correctAnswer: this.correct,
-      targetOptions: this.options,
-      targetClasses: {}
+      targetOptions: this.options
     };
   },
 
