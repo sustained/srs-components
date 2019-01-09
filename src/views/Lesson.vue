@@ -10,13 +10,25 @@
         {{ currentExerciseIndex + 1 }} / {{ exerciseCount }}
       </p>
 
-      <lesson-choose-translation
-        :prompt="currentExercise.prompt"
-        :answer="currentExercise.answer"
-        :options="currentExercise.choices"
-        @correct="onAnswer"
-        @incorrect="onAnswer"
-      />
+      <template v-if="currentExercise.type === 'choose-translation'">
+        <lesson-choose-translation
+          :prompt="currentExercise.prompt"
+          :answer="currentExercise.answer"
+          :options="currentExercise.choices"
+          @correct="onAnswer"
+          @incorrect="onAnswer"
+        />
+      </template>
+
+      <template v-else-if="currentExercise.type === 'select-words'">
+        <lesson-select-words
+          :prompt="currentExercise.prompt"
+          :answer="currentExercise.answer"
+          :options="currentExercise.choices"
+          @correct="onAnswer"
+          @incorrect="onAnswer"
+        />
+      </template>
     </template>
 
     <template v-else>
@@ -28,6 +40,7 @@
 <script>
 import LessonComplete from "@/components/LessonComplete.vue";
 import LessonChooseTranslation from "@/components/LessonChooseTranslation.vue";
+import LessonSelectWords from "@/components/LessonSelectWords.vue";
 
 export default {
   name: "lesson",
@@ -41,7 +54,6 @@ export default {
       session: [],
       exercises: [
         {
-          id: 0,
           type: "choose-translation",
           prompt: "dog",
           answer: "hund",
@@ -49,7 +61,27 @@ export default {
         },
 
         {
-          id: 1,
+          type: "choose-translation",
+          prompt: "cat",
+          answer: "katt",
+          choices: ["hund", "katt", "mus"]
+        },
+
+        {
+          type: "choose-translation",
+          prompt: "and",
+          answer: "och",
+          choices: ["eller", "och", "men"]
+        },
+
+        {
+          type: "select-words",
+          prompt: "dog and cat",
+          answer: ["hund", "och", "katt"],
+          choices: ["hund", "hus", "dog", "katt", "ond", "eller", "mus", "och"]
+        },
+
+        {
           type: "choose-translation",
           prompt: "woman",
           answer: "kvinna",
@@ -57,7 +89,6 @@ export default {
         },
 
         {
-          id: 2,
           type: "choose-translation",
           prompt: "milk",
           answer: "mjölk",
@@ -79,10 +110,29 @@ export default {
 
   components: {
     LessonComplete,
-    LessonChooseTranslation
+    LessonChooseTranslation,
+    LessonSelectWords
+  },
+
+  mounted() {
+    console.log("mount");
+    window.addEventListener("keyup", this._keyupListener.bind(this));
+  },
+
+  unmounted() {
+    console.log("unmount");
+    window.removeEventListener("keyup", this._keyupListener.bind(this));
   },
 
   methods: {
+    _keyupListener() {
+      if (
+        (event.keyCode >= 49 && event.keyCode <= 57) ||
+        (event.keyCode >= 97 && event.keyCode <= 105)
+      )
+        this.$event.$emit("navigateNumeric", event.key);
+    },
+
     startSession() {
       this.sessionStarted = true;
       this.nextExercise();
