@@ -71,6 +71,10 @@ export default {
     },
 
     navigateNumerically(number) {
+      let index = number - 1;
+
+      if (index < 0 || index >= this.theOptions.length) return;
+
       let choice = this.theOptions[number - 1];
 
       this.checkAnswer(choice);
