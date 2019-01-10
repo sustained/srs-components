@@ -1,23 +1,24 @@
 <template>
-  <div @keyup.up.native="numberKeyWasPressed">
+  <div>
     <h1>{{ thePrompt }}</h1>
 
     <p>Select the words to build the correct translation:</p>
 
-    <ul id="selected-words">
-      <li
-        v-for="(choice, choiceIndex) in choices"
-        :key="choiceIndex"
-        @click="removeChoice(choice)"
-      >{{ choice }}</li>
-
-      <br style="clear: both;">
+    <ul id="user-choices">
+      <li v-for="(choice, choiceIndex) in choices" :key="choiceIndex" @click="removeChoice(choice)">
+        <span>{{ choice.id + 1 }}.</span>
+        {{ choice.choice }}
+      </li>
     </ul>
 
-    <ul id="choices">
-      <li v-for="(option, index) in availableOptions" :key="index" @click="addChoice(option)">
-        <span>{{ index + 1 }}.</span>
-        {{ option }}
+    <ul id="available-options">
+      <li
+        v-for="(option, optionIndex) in availableOptions"
+        :key="optionIndex"
+        @click="addChoice(option)"
+      >
+        <span>{{ option.id + 1 }}.</span>
+        {{ option.choice }}
       </li>
     </ul>
   </div>
@@ -36,10 +37,6 @@ export default {
 
   data() {
     return {
-      listeners: {
-        change: null,
-        navigateNumeric: null
-      },
       choices: [],
       thePrompt: this.prompt,
       theAnswer: this.answer,
@@ -68,19 +65,18 @@ export default {
   },
 
   created() {
-    this.$parent.$on("change", () => (this.guess = null));
+    this.$on("change", () => {
+      this.checkForAnswer();
+    });
 
-    console.log("hai");
     this.$event.$on("navigateNumeric", number => {
       this.addOrRemoveChoice(number);
     });
   },
 
   beforeDestroy() {
-    this.$parent.$off("change");
+    this.$off("change");
     this.$event.$off("navigateNumeric");
-
-    // this.listeners.change = this.listeners.navigateNumeric = null;
   },
 
   methods: {
@@ -103,8 +99,6 @@ export default {
 
       const choice = this.theOptions[index - 1];
 
-      console.log("add or remove " + choice);
-
       if (this.choices.indexOf(choice) === -1) this.addChoice(choice);
       else this.removeChoice(choice);
     },
@@ -118,17 +112,25 @@ export default {
       return this.guess === option && this.guess !== this.theAnswer;
     },
 
-    checkAnswer(option) {
-      this.guess = option;
+    checkForAnswer() {
+      if (this.choices.length !== this.theAnswer.length) return false;
 
-      let wasCorrect = option === this.theAnswer;
-      let eventName = wasCorrect ? "correct" : "incorrect";
+      let wasCorrect = false;
 
-      this.$emit(eventName, {
+      for (let i = 0; i < this.theAnswer.length; i++) {
+        wasCorrect = this.choices[i].choice === this.theAnswer[i];
+
+        if (!wasCorrect) break;
+      }
+
+      if (!wasCorrect) return false;
+
+      this.$emit("correct", {
+        type: "select-words",
         correct: wasCorrect,
-        choice: option,
+        choice: this.choices,
         answer: this.theAnswer,
-        prompt: this.sourceWord
+        prompt: this.thePrompt
       });
     }
   }
@@ -141,7 +143,7 @@ ul {
   margin: 0;
 }
 
-ul#choices li {
+ul#available-options li {
   display: block;
   border: 1px solid black;
   padding: 10px;
@@ -150,14 +152,14 @@ ul#choices li {
   font-size: 1.2rem;
 }
 
-ul#selected-words {
+ul#user-choices {
   list-style-type: none;
   height: 60px;
   border: 1px solid black;
   margin-bottom: 20px;
 }
 
-ul#selected-words li {
+ul#user-choices li {
   margin: 10px;
   border: 1px solid black;
   padding: 10px;
