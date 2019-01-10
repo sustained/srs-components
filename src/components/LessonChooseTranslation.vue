@@ -51,13 +51,13 @@ export default {
   },
 
   created() {
-    this.$event.$on("navigateNumeric", number => {
+    this.$event.$on("navigateNumerically", number => {
       this.selectChoice(number);
     });
   },
 
   beforeDestroy() {
-    this.$event.$off("navigateNumeric");
+    // this.$event.$off("navigateNumerically");
   },
 
   methods: {

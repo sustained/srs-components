@@ -145,7 +145,7 @@ export default {
         (event.keyCode >= 49 && event.keyCode <= 57) ||
         (event.keyCode >= 97 && event.keyCode <= 105)
       )
-        this.$event.$emit("navigateNumeric", event.key);
+        this.$event.$emit("navigateNumerically", event.key);
     },
 
     startSession() {

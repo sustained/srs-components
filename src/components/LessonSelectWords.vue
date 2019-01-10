@@ -69,14 +69,14 @@ export default {
       this.checkForAnswer();
     });
 
-    this.$event.$on("navigateNumeric", number => {
+    this.$event.$on("navigateNumerically", number => {
       this.addOrRemoveChoice(number);
     });
   },
 
   beforeDestroy() {
     this.$off("change");
-    this.$event.$off("navigateNumeric");
+    // this.$event.$off("navigateNumerically");
   },
 
   methods: {
