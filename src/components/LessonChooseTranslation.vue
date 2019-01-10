@@ -51,9 +51,9 @@ export default {
   },
 
   created() {
-    this.$event.$on("navigateNumerically", number => {
-      this.selectChoice(number);
-    });
+    // this.$event.$on("navigateNumerically", number => {
+    //   this.selectChoice(number);
+    // });
   },
 
   beforeDestroy() {
@@ -70,7 +70,7 @@ export default {
       return this.guess === option && this.guess !== this.theAnswer;
     },
 
-    selectChoice(number) {
+    navigateNumerically(number) {
       let choice = this.theOptions[number - 1];
 
       this.checkAnswer(choice);

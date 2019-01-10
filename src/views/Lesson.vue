@@ -12,6 +12,7 @@
 
       <template v-if="currentExercise.type === 'choose-translation'">
         <lesson-choose-translation
+          ref="exercise"
           :prompt="currentExercise.prompt"
           :answer="currentExercise.answer"
           :options="currentExercise.choices"
@@ -23,6 +24,7 @@
 
       <template v-else-if="currentExercise.type === 'select-words'">
         <lesson-select-words
+          ref="exercise"
           :prompt="currentExercise.prompt"
           :answer="currentExercise.answer"
           :options="currentExercise.choices"
@@ -131,12 +133,12 @@ export default {
 
   mounted() {
     console.log("mount");
-    window.addEventListener("keyup", this._keyupListener.bind(this));
+    window.addEventListener("keyup", this._keyupListener);
   },
 
   unmounted() {
     console.log("unmount");
-    window.removeEventListener("keyup", this._keyupListener.bind(this));
+    window.removeEventListener("keyup", this._keyupListener);
   },
 
   methods: {
@@ -145,7 +147,7 @@ export default {
         (event.keyCode >= 49 && event.keyCode <= 57) ||
         (event.keyCode >= 97 && event.keyCode <= 105)
       )
-        this.$event.$emit("navigateNumerically", event.key);
+        this.$refs.exercise.navigateNumerically(event.key);
     },
 
     startSession() {
@@ -182,3 +184,10 @@ export default {
   }
 };
 </script>
+
+<style>
+ul {
+  padding: 0;
+  margin: 0;
+}
+</style>

@@ -69,9 +69,9 @@ export default {
       this.checkForAnswer();
     });
 
-    this.$event.$on("navigateNumerically", number => {
-      this.addOrRemoveChoice(number);
-    });
+    // this.$event.$on("navigateNumerically", number => {
+    //   this.addOrRemoveChoice(number);
+    // });
   },
 
   beforeDestroy() {
@@ -94,7 +94,7 @@ export default {
       this.$emit("change", { removed });
     },
 
-    addOrRemoveChoice(index) {
+    navigateNumerically(index) {
       if (index < 0 || index > this.theOptions.length) return;
 
       const choice = this.theOptions[index - 1];
@@ -138,11 +138,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-ul {
-  padding: 0;
-  margin: 0;
-}
-
 ul#available-options li {
   display: block;
   border: 1px solid black;
