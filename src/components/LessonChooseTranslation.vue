@@ -50,7 +50,7 @@ export default {
     }
   },
 
-  mounted() {
+  created() {
     this.$parent.$on("change", () => (this.guess = null));
   },
 
