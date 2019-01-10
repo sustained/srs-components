@@ -10,6 +10,9 @@
         {{ currentExerciseDisplay }}
       </p>
 
+      <!--
+        TODO: Find out if we can just use <component is="..." /> here instead?
+      -->
       <template v-if="currentExercise.type === 'choose-translation'">
         <lesson-choose-translation
           ref="exercise"
@@ -51,11 +54,17 @@ export default {
 
   data() {
     return {
-      delay: 1000,
-      currentExerciseIndex: -1,
+      // NOTE: Temporarily disabled (works fine for "choose-translation" but not for "select-words".
+      navigationBlocked: false, // Disable keyboard navigation after answering until the next exercise.
+
+      nextExerciseDelay: 1000,
+
       sessionStarted: false,
       sessionEnded: false,
-      session: [],
+      session: [], // Track the user's answers - used at the end of the lesson.
+
+      currentExerciseIndex: -1,
+
       exercises: [
         {
           type: "choose-translation",
@@ -132,12 +141,10 @@ export default {
   },
 
   mounted() {
-    console.log("mount");
     window.addEventListener("keyup", this._keyupListener);
   },
 
   unmounted() {
-    console.log("unmount");
     window.removeEventListener("keyup", this._keyupListener);
   },
 
@@ -146,12 +153,17 @@ export default {
       if (
         (event.keyCode >= 49 && event.keyCode <= 57) ||
         (event.keyCode >= 97 && event.keyCode <= 105)
-      )
+      ) {
+        // if (!this.navigationBlocked) {
         this.$refs.exercise.navigateNumerically(event.key);
+        this.navigationBlocked = true;
+        // }
+      }
     },
 
     startSession() {
       this.sessionStarted = true;
+      // this.navigationBlocked = false;
       this.nextExercise();
     },
 
@@ -159,6 +171,7 @@ export default {
       this.session = [];
       this.sessionStarted = true;
       this.sessionEnded = false;
+      // this.navigationBlocked = true;
       this.currentExerciseIndex = 0;
     },
 
@@ -170,16 +183,18 @@ export default {
       if (this.currentExerciseIndex + 1 === this.exerciseCount) {
         this.sessionEnded = true;
         this.sessionStarted = false;
+        // this.navigationBlocked = true;
         this.$emit("finish");
       } else {
         this.currentExerciseIndex++;
         this.$emit("change");
+        // this.navigationBlocked = false;
       }
     },
 
     onAnswer(answer) {
       this.addSessionEntry(answer);
-      setTimeout(() => this.nextExercise(), this.delay);
+      setTimeout(() => this.nextExercise(), this.nextExerciseDelay);
     }
   }
 };
