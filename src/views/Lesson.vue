@@ -7,7 +7,7 @@
     <template v-else-if="sessionStarted">
       <p>
         <strong>Current Exercise:</strong>
-        {{ currentExerciseIndex + 1 }} / {{ exerciseCount }}
+        {{ currentExerciseDisplay }}
       </p>
 
       <template v-if="currentExercise.type === 'choose-translation'">
@@ -17,6 +17,7 @@
           :options="currentExercise.choices"
           @correct="onAnswer"
           @incorrect="onAnswer"
+          :key="'choose-translation-' + currentExerciseIndex"
         />
       </template>
 
@@ -27,6 +28,7 @@
           :options="currentExercise.choices"
           @correct="onAnswer"
           @incorrect="onAnswer"
+          :key="'select-words-' + currentExerciseIndex"
         />
       </template>
     </template>
@@ -78,7 +80,16 @@ export default {
           type: "select-words",
           prompt: "dog and cat",
           answer: ["hund", "och", "katt"],
-          choices: ["hund", "hus", "dog", "katt", "ond", "eller", "mus", "och"]
+          choices: [
+            { id: 0, choice: "hund" },
+            { id: 1, choice: "hus" },
+            { id: 2, choice: "dog" },
+            { id: 3, choice: "ond" },
+            { id: 4, choice: "katt" },
+            { id: 5, choice: "eller" },
+            { id: 6, choice: "mus" },
+            { id: 7, choice: "och" }
+          ]
         },
 
         {
@@ -105,6 +116,10 @@ export default {
 
     currentExercise() {
       return this.exercises[this.currentExerciseIndex];
+    },
+
+    currentExerciseDisplay() {
+      return this.currentExerciseIndex + 1 + " / " + this.exerciseCount;
     }
   },
 
@@ -145,9 +160,8 @@ export default {
       this.currentExerciseIndex = 0;
     },
 
-    addSessionEntry(wasCorrect, choice) {
-      let entry = { choice: choice, wasCorrect: wasCorrect };
-      this.session.push(entry);
+    addSessionEntry(answer) {
+      this.session.push(answer);
     },
 
     nextExercise() {
@@ -161,9 +175,8 @@ export default {
       }
     },
 
-    onAnswer({ correct, choice }) {
-      this.addSessionEntry(correct, choice);
-
+    onAnswer(answer) {
+      this.addSessionEntry(answer);
       setTimeout(() => this.nextExercise(), this.delay);
     }
   }
