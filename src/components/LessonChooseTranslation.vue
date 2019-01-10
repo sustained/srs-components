@@ -2,7 +2,7 @@
   <div>
     <h1>{{ thePrompt }}</h1>
 
-    <p>Pick the correct translation:</p>
+    <p>Choose the correct translation:</p>
 
     <ul>
       <li
@@ -51,7 +51,13 @@ export default {
   },
 
   created() {
-    this.$parent.$on("change", () => (this.guess = null));
+    this.$event.$on("navigateNumeric", number => {
+      this.selectChoice(number);
+    });
+  },
+
+  beforeDestroy() {
+    this.$event.$off("navigateNumeric");
   },
 
   methods: {
@@ -64,6 +70,12 @@ export default {
       return this.guess === option && this.guess !== this.theAnswer;
     },
 
+    selectChoice(number) {
+      let choice = this.theOptions[number - 1];
+
+      this.checkAnswer(choice);
+    },
+
     checkAnswer(option) {
       this.guess = option;
 
@@ -71,10 +83,11 @@ export default {
       let eventName = wasCorrect ? "correct" : "incorrect";
 
       this.$emit(eventName, {
+        type: "choose-translation",
         correct: wasCorrect,
         choice: option,
         answer: this.theAnswer,
-        prompt: this.sourceWord
+        prompt: this.thePrompt
       });
     }
   }
