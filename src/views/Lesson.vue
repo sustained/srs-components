@@ -1,5 +1,11 @@
 <template>
   <div>
+    <lesson-progress
+      :currentExercise="currentExerciseIndex"
+      :exerciseCount="exerciseCount"
+      :sessionEnded="sessionEnded"
+    />
+
     <template v-if="sessionEnded">
       <lesson-complete :session="session" @restart="resetSession"/>
     </template>
@@ -32,6 +38,7 @@
 import LessonComplete from "@/components/LessonComplete.vue";
 import LessonChooseTranslation from "@/components/LessonChooseTranslation.vue";
 import LessonSelectWords from "@/components/LessonSelectWords.vue";
+import LessonProgress from "@/components/LessonProgress.vue";
 
 export default {
   name: "lesson",
@@ -39,9 +46,7 @@ export default {
   data() {
     return {
       // NOTE: Temporarily disabled (works fine for "choose-translation" but not for "select-words".
-      navigationBlocked: false, // Disable keyboard navigation after answering until the next exercise.
-
-      nextExerciseDelay: 1000,
+      navigationBlocked: true, // Disable keyboard navigation after answering until the next exercise.
 
       sessionStarted: false,
       sessionEnded: false,
@@ -134,6 +139,7 @@ export default {
   },
 
   components: {
+    LessonProgress,
     LessonComplete,
     LessonChooseTranslation,
     LessonSelectWords
@@ -153,16 +159,18 @@ export default {
         (event.keyCode >= 49 && event.keyCode <= 57) ||
         (event.keyCode >= 97 && event.keyCode <= 105)
       ) {
-        // if (!this.navigationBlocked) {
-        this.$refs.exercise.navigateNumerically(event.key);
-        this.navigationBlocked = true;
-        // }
+        if (!this.navigationBlocked) {
+          this.$refs.exercise.navigateNumerically(event.key);
+
+          if (this.currentExercise.type !== "select-words")
+            this.navigationBlocked = true;
+        }
       }
     },
 
     startSession() {
       this.sessionStarted = true;
-      // this.navigationBlocked = false;
+      this.navigationBlocked = false;
       this.nextExercise();
     },
 
@@ -170,7 +178,7 @@ export default {
       this.session = [];
       this.sessionStarted = true;
       this.sessionEnded = false;
-      // this.navigationBlocked = true;
+      this.navigationBlocked = false;
       this.currentExerciseIndex = 0;
     },
 
@@ -180,14 +188,15 @@ export default {
 
     nextExercise() {
       if (this.currentExerciseIndex + 1 === this.exerciseCount) {
+        clearInterval(this.countdown);
         this.sessionEnded = true;
         this.sessionStarted = false;
-        // this.navigationBlocked = true;
+        this.navigationBlocked = true;
         this.$emit("finish");
       } else {
         this.currentExerciseIndex++;
+        this.navigationBlocked = false;
         this.$emit("change");
-        // this.navigationBlocked = false;
       }
     },
 
