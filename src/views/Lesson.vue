@@ -10,32 +10,16 @@
         {{ currentExerciseDisplay }}
       </p>
 
-      <!--
-        TODO: Find out if we can just use <component is="..." /> here instead?
-      -->
-      <template v-if="currentExercise.type === 'choose-translation'">
-        <lesson-choose-translation
-          ref="exercise"
-          :prompt="currentExercise.prompt"
-          :answer="currentExercise.answer"
-          :options="currentExercise.choices"
-          @correct="onAnswer"
-          @incorrect="onAnswer"
-          :key="'choose-translation-' + currentExerciseIndex"
-        />
-      </template>
-
-      <template v-else-if="currentExercise.type === 'select-words'">
-        <lesson-select-words
-          ref="exercise"
-          :prompt="currentExercise.prompt"
-          :answer="currentExercise.answer"
-          :options="currentExercise.choices"
-          @correct="onAnswer"
-          @incorrect="onAnswer"
-          :key="'select-words-' + currentExerciseIndex"
-        />
-      </template>
+      <component
+        ref="exercise"
+        :is="'lesson-' + currentExercise.type"
+        :prompt="currentExercise.prompt"
+        :answer="currentExercise.answer"
+        :options="currentExercise.choices"
+        @correct="onAnswer"
+        @incorrect="onAnswer"
+        :key="'choose-translation-' + currentExerciseIndex"
+      />
     </template>
 
     <template v-else>
@@ -104,6 +88,21 @@ export default {
         },
 
         {
+          type: "select-words",
+          prompt: "man and woman",
+          answer: ["man", "och", "kvinna"],
+          choices: [
+            { id: 0, choice: "man" },
+            { id: 1, choice: "pojke" },
+            { id: 2, choice: "flicka" },
+            { id: 3, choice: "kvinna" },
+            { id: 4, choice: "och" },
+            { id: 5, choice: "eller" },
+            { id: 6, choice: "men" }
+          ]
+        },
+
+        {
           type: "choose-translation",
           prompt: "woman",
           answer: "kvinna",
@@ -144,12 +143,12 @@ export default {
     window.addEventListener("keyup", this._keyupListener);
   },
 
-  unmounted() {
+  beforeDestroy() {
     window.removeEventListener("keyup", this._keyupListener);
   },
 
   methods: {
-    _keyupListener() {
+    _keyupListener(event) {
       if (
         (event.keyCode >= 49 && event.keyCode <= 57) ||
         (event.keyCode >= 97 && event.keyCode <= 105)
