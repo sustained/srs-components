@@ -64,34 +64,15 @@ export default {
     }
   },
 
-  created() {
-    this.$on("change", () => {
-      this.checkForAnswer();
-    });
-
-    // this.$event.$on("navigateNumerically", number => {
-    //   this.addOrRemoveChoice(number);
-    // });
-  },
-
-  beforeDestroy() {
-    this.$off("change");
-    // this.$event.$off("navigateNumerically");
-  },
-
   methods: {
-    numberKeyWasPressed() {
-      alert("yeay");
-    },
-
     addChoice(added) {
       this.choices.push(added);
-      this.$emit("change", { added });
+      this.checkForAnswer();
     },
 
     removeChoice(removed) {
       this.choices.splice(this.choices.indexOf(removed), 1);
-      this.$emit("change", { removed });
+      this.checkForAnswer();
     },
 
     navigateNumerically(index) {
@@ -124,6 +105,9 @@ export default {
       }
 
       if (!wasCorrect) return false;
+
+      // HACK: There surely must be a better way.
+      this.$parent.navigationBlocked = true;
 
       this.$emit("correct", {
         type: "select-words",
